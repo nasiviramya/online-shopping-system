@@ -1,0 +1,95 @@
+class Product:
+    def __init__(self, product_id, name, price, stock_quantity):
+        self.product_id = product_id
+        self.name = name
+        self.price = price
+        self.stock_quantity = stock_quantity
+
+    def display_info(self):
+        print(f"{self.name} - ${self.price} - Stock: {self.stock_quantity}")
+
+class ShoppingCart:
+    def __init__(self):
+        self.items = {}
+
+    def add_item(self, product, quantity):
+        if product.product_id in self.items:
+            self.items[product.product_id]["quantity"] += quantity
+        else:
+            self.items[product.product_id] = {"product": product, "quantity": quantity}
+
+    def remove_item(self, product_id, quantity):
+        if product_id in self.items:
+            if quantity >= self.items[product_id]["quantity"]:
+                del self.items[product_id]
+            else:
+                self.items[product_id]["quantity"] -= quantity
+
+    def calculate_total(self):
+        total = 0
+        for item in self.items.values():
+            total += item["product"].price * item["quantity"]
+        return total
+
+    def display_cart(self):
+        for item in self.items.values():
+            product = item["product"]
+            quantity = item["quantity"]
+            print(f"{product.name} - ${product.price} x {quantity}")
+
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.order_history = []
+
+    def add_order(self, order):
+        self.order_history.append(order)
+
+class Order:
+    def __init__(self, items, total):
+        self.items = items
+        self.total = total
+
+# Example Usage:
+# Create products
+product1 = Product(1, "Laptop", 1000, 10)
+product2 = Product(2, "Phone", 500, 20)
+product3 = Product(3, "Watch", 200, 15)
+product4 = Product(4, "Camera", 800, 5)
+
+# Create a user and a shopping cart
+user1 = User("samuel", "Samuel123")
+cart1 = ShoppingCart()
+
+# User adds items to the cart
+cart1.add_item(product1, 2)
+cart1.add_item(product2, 1)
+
+# Display the cart
+cart1.display_cart()
+
+# User removes an item from the cart
+cart1.remove_item(1, 1)
+
+# Display the updated cart
+cart1.display_cart()
+
+# User adds more items to the cart
+cart1.add_item(product3, 1)
+cart1.add_item(product4, 2)
+
+# Display the updated cart
+cart1.display_cart()
+
+# User checks out again
+total_amount = cart1.calculate_total()
+order1 = Order(cart1.items, total_amount)
+user1.add_order(order1)
+
+# Display user order history
+print(f"{user1.username}'s Updated Order History:")
+for i, order in enumerate(user1.order_history, 1):
+    print(f"Order {i}: Total ${order.total}")
+    for item in order.items.values():
+        print(f"  {item['product'].name} - ${item['product'].price} x {item['quantity']}")
